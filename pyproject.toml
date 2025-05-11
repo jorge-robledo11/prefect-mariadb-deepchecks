@@ -1,0 +1,18 @@
+[project]
+name = "venv-feast-aws-deepchecks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "feast>=0.49.0",
+    "feature-engine>=1.8.3",
+    "pymysql>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "boto3>=1.38.13",
+    "deepchecks>=0.19.1",
+    "jupyter>=1.1.1",
+]

@@ -47,7 +47,7 @@ logit = np.clip(logit, -10, 10)
 prob = expit(logit)
 
 # 6) Guardar en Parquet
-data_dir = Path('../data')
+data_dir = Path('../infrastructure/data')
 data_dir.mkdir(parents=True, exist_ok=True)
 parquet_path = data_dir / 'dataset.parquet'
 df.to_parquet(parquet_path, index=False)
