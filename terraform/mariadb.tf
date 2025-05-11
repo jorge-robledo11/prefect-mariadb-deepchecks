@@ -24,7 +24,8 @@ EOF
 }
 
 resource "docker_image" "mariadb" {
-  name = "mariadb:latest"
+  name         = "mariadb:latest"
+  force_remove = true
 }
 
 resource "docker_container" "mariadb" {

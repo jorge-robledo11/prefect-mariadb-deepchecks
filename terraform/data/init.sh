@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS mi_tabla (
   cont3 DECIMAL(10,4),
   cont4 DECIMAL(10,4),
   disc1 TINYINT,
-  disc2 TINYINT
+  disc2 TINYINT,
+  target TINYINT
 );
 "
 

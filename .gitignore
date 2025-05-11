@@ -174,7 +174,6 @@ cython_debug/
 .pypirc
 
 .vscode/
-prueba.ipynb
 *.tfstate
 .terraform/
 terraform.tfvars
