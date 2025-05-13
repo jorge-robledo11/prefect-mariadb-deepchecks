@@ -1,5 +1,0 @@
-
-mysql_root_password = "REPLACE_WITH_YOUR_PASSWORD"
-mysql_database      = "REPLACE_WITH_YOUR_DB_NAME"
-port_internal       = 3306
-port_external       = 3307
