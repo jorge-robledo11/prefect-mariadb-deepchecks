@@ -15,7 +15,7 @@ def main() -> None:
     # 1) Cargar los datos
     data = load_data()
 
-    # 2) Separar el dataset en train, val y test
+    # 2) Separar el dataset en train y test
     train_set, test_set = split_dataset(
         data=data, 
         target='target'
