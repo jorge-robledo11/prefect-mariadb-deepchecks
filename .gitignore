@@ -178,3 +178,4 @@ cython_debug/
 .terraform/
 terraform.tfvars
 *.auto.tfvars
+docs/prompts.txt
