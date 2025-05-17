@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
+from prefect import task
 
 
+@task(name='Cargar datos iniciales', retries=3)
 def load_data() -> pd.DataFrame:
     """
     Esta función lee las credenciales de conexión desde un archivo .env,

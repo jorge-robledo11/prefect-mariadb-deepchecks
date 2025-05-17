@@ -1,5 +1,7 @@
 from src.load_data import load_data
-from src.split_dataset import split_dataset
+from src.split_dataset import split_dataset, split_features_and_target
+from src.pipelines import feature_engineering
+from prefect import flow
 
 import warnings
 warnings.simplefilter('ignore')
@@ -8,7 +10,8 @@ warnings.simplefilter('ignore')
 # --------------------------------------------------------------------------------
 #                               FLUJO DEL PROYECTO
 # --------------------------------------------------------------------------------
-def main() -> None:
+@flow(name='Flujo de ML', log_prints=True)
+def main(target: str) -> None:
     """
     Función principal que ejecuta la carga y preprocesamiento de datos.
     """
@@ -18,8 +21,25 @@ def main() -> None:
     # 2) Separar el dataset en train y test
     train_set, test_set = split_dataset(
         data=data, 
-        target='target'
+        target=target
+    )
+    
+    X_train, y_train, X_test, y_test = split_features_and_target(
+        train_set=train_set,
+        test_set=test_set
     )
 
+    X_train, X_test = feature_engineering(
+        X_train=X_train,
+        y_train=y_train,
+        X_test=X_test
+    )
+    
+    
 if __name__ == '__main__':
-    main()
+    # main(target='target')
+    deployment_name = 'ml-pipeline-interval-deployment'
+    main.serve(
+        name=deployment_name,
+        interval=300 # Intervalo en segundos
+    )

@@ -1,8 +1,10 @@
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from pathlib import Path
+from prefect import task
 
 
+@task(name='Separar el dataset y guardarlos', retries=3)
 def split_dataset(data: DataFrame, target: str, seed: int=42) -> tuple[DataFrame, DataFrame]:
     """
     Divide un dataset en conjuntos de entrenamiento y prueba, y guarda los archivos en formato Parquet.
@@ -33,6 +35,15 @@ def split_dataset(data: DataFrame, target: str, seed: int=42) -> tuple[DataFrame
         stratify=data[target]
     )
     
+    # Definir grupos de variables
+    discrete_vars = ['disc1', 'disc2']
+    categorical_vars = ['cat1', 'cat2']
+
+    # Convertir tipos correctamente
+    for dataset in [train_data, test_data]:
+        dataset[discrete_vars] = dataset[discrete_vars].astype('object')
+        dataset[categorical_vars] = dataset[categorical_vars].astype('object')
+    
     # 4) Rutas de salida Parquet
     train_path = data_dir / 'train.parquet'
     test_path = data_dir / 'test.parquet'
@@ -42,3 +53,37 @@ def split_dataset(data: DataFrame, target: str, seed: int=42) -> tuple[DataFrame
     test_data.to_parquet(test_path, index=False)
     
     return train_data, test_data
+
+
+@task(name='Separar características y target', retries=3)
+def split_features_and_target(train_set: DataFrame, test_set: DataFrame) -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
+    """
+    Separa las características (features) y la variable objetivo (target) de los conjuntos de datos de entrenamiento y prueba.
+
+    Parámetros:
+    -----------
+    train_set : DataFrame
+        Conjunto de datos de entrenamiento que incluye las columnas 'id' y 'target'.
+    test_set : DataFrame
+        Conjunto de datos de prueba que incluye las columnas 'id' y 'target'.
+
+    Retorna:
+    --------
+    X_train : DataFrame
+        DataFrame con las características de entrenamiento (excluye 'id' y 'target').
+    y_train : Series
+        Serie con la variable objetivo de entrenamiento.
+    X_test : DataFrame
+        DataFrame con las características de prueba (excluye 'id' y 'target').
+    y_test : Series
+        Serie con la variable objetivo de prueba.
+    """
+    # Selección de características y target en entrenamiento
+    X_train = train_set.loc[:, [var for var in train_set.columns if var not in ['id', 'target']]]
+    y_train = train_set['target']
+
+    # Selección de características y target en prueba
+    X_test = test_set.loc[:, [var for var in test_set.columns if var not in ['id', 'target']]]
+    y_test = test_set['target']
+
+    return X_train, y_train, X_test, y_test
