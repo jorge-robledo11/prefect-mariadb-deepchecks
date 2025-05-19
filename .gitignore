@@ -179,3 +179,4 @@ cython_debug/
 terraform.tfvars
 *.auto.tfvars
 docs/prompts.txt
+data/raw/dataset_raw.csv

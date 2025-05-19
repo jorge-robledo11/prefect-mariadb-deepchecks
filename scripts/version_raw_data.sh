@@ -62,7 +62,7 @@ TARGET_FILE_TO_VERSION="$DVC_TRACKED_CSV_FILE_PATH"
 # --- 2. Versionar el archivo CSV con DVC ---
 # Asegúrate de que data/raw/dataset_raw.csv está en tu .gitignore
 echo "Paso 2: Versionando archivo de datos CSV ('$TARGET_FILE_TO_VERSION') con DVC..."
-dvc add "$TARGET_FILE_TO_VERSION"
+uv run dvc add "$TARGET_FILE_TO_VERSION"
 # Esto creará/actualizará el archivo data/raw/dataset_raw.csv.dvc
 
 # --- 3. Confirmar los cambios del archivo .dvc en Git ---
@@ -79,11 +79,10 @@ fi
 
 # --- 4. Subir los datos al almacenamiento remoto de DVC (Opcional pero recomendado) ---
 echo "Paso 4: Subiendo datos CSV al almacenamiento remoto de DVC (dvc push)..."
-dvc push "$TARGET_FILE_TO_VERSION.dvc"
+uv run dvc push "$TARGET_FILE_TO_VERSION.dvc"
 
 # --- 5. Subir los cambios de Git al repositorio remoto (Opcional pero recomendado) ---
 echo "Paso 5: Subiendo commits de Git al repositorio remoto (git push)..."
-# git push # Descomenta si quieres que este script también haga git push
 
 echo "-------------------------------------------------------------"
 echo "Proceso de actualización y versionado de datos crudos CSV completado."
