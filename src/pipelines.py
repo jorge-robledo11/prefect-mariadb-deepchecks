@@ -39,8 +39,4 @@ def feature_engineering(X_train: DataFrame, y_train: Series, X_test: DataFrame) 
     # 5) Transforma los datos de prueba usando el pipeline ya ajustado.
     X_test_transformed = best_pipeline.transform(X_test)
     
-<<<<<<< HEAD
     return X_train_transformed, X_test_transformed
-=======
-    return X_train_transformed, X_test_transformed
->>>>>>> d897c2044bfca3f462a6e0ebb9275370ec1b8664

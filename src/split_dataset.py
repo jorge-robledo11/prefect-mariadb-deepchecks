@@ -20,7 +20,7 @@ def split_dataset(data: DataFrame, target: str, seed: int=42) -> tuple[DataFrame
     
     # 1) Determina root_dir
     root_dir = Path(__file__).parent.parent if '__file__' in globals() else Path.cwd()
-    data_dir = root_dir / 'data'
+    data_dir = root_dir / 'data' / 'processed'
     
     # 2) Crea 'data/' si no existe
     if not data_dir.exists():

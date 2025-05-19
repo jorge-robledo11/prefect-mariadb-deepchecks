@@ -37,9 +37,9 @@ def main(target: str) -> None:
     
     
 if __name__ == '__main__':
-    # main(target='target')
-    deployment_name = 'ml-pipeline-interval-deployment'
-    main.serve(
-        name=deployment_name,
-        interval=300 # Intervalo en segundos
-    )
+    main(target='target')
+    # deployment_name = 'ml-pipeline-interval-deployment'
+    # main.serve(
+    #     name=deployment_name,
+    #     interval=300 # Intervalo en segundos
+    # )

@@ -9,19 +9,7 @@ terraform {
 
 provider "docker" {}
 
-# (Opcional) si usas conversión automática:
-resource "null_resource" "convert_parquet" {
-  provisioner "local-exec" {
-    command = <<EOC
-python3 - <<EOF
-import pandas as pd
-df = pd.read_parquet("data/dataset.parquet")
-df.to_csv("data/dataset.csv", index=False)
-EOF
-    EOC
-  }
-  triggers = { parquet_hash = filesha256("data/dataset.parquet") }
-}
+# El recurso null_resource "convert_parquet" se elimina.
 
 resource "docker_image" "mariadb" {
   name         = "mariadb:latest"
@@ -42,15 +30,23 @@ resource "docker_container" "mariadb" {
     external = var.port_external
   }
 
+  # Primer punto de montaje: script de inicialización
   mounts {
-    type   = "bind"
-    source = "${abspath(path.module)}/data"
-    target = "/docker-entrypoint-initdb.d"
+    type      = "bind"
+    source    = abspath("${path.module}/init.sh") # terraform/init.sh
+    target    = "/docker-entrypoint-initdb.d/01_init_database.sh"
+    read_only = true
+  }
+
+  # Segundo punto de montaje: directorio de datos CSV
+  mounts {
+    type      = "bind"
+    source    = abspath("${path.module}/../data/raw") # proyecto_raiz/data/raw/
+    target    = "/data_source"                        # init.sh usa /data_source/dataset_raw.csv
+    read_only = true
   }
 
   restart        = "always"
   remove_volumes = true
 
-  # garantiza que primero convierta el Parquet
-  depends_on = [null_resource.convert_parquet]
 }

@@ -47,8 +47,24 @@ logit = np.clip(logit, -10, 10)
 prob = expit(logit)
 df['target'] = (prob > 0.5).astype('int8')
 
-# 6) Guardar en Parquet
-data_dir = Path('../terraform/data')
-data_dir.mkdir(parents=True, exist_ok=True)
-parquet_path = data_dir / 'dataset.parquet'
-df.to_parquet(parquet_path, index=False)
+# 6) Guardar en CSV con validación y creación de la carpeta 'raw'
+base_data_dir = Path().cwd() / 'data'
+
+# Definir la ruta completa a la carpeta 'raw' dentro del directorio base
+raw_data_dir = base_data_dir / 'raw'
+
+# Validar si la carpeta 'raw' existe; si no, crearla
+if not raw_data_dir.exists():
+    print(f'La carpeta {raw_data_dir.resolve()} no existe. Creándola...')
+    raw_data_dir.mkdir(parents=True, exist_ok=True)
+else:
+    print(f'La carpeta {raw_data_dir.resolve()} ya existe.')
+
+# Definir la ruta completa del archivo CSV dentro de la carpeta 'raw'
+file_name = 'dataset_raw.csv'
+file_path = raw_data_dir / file_name
+
+# Guardar el DataFrame en el archivo CSV
+df.to_csv(file_path, index=False)
+
+print(f'DataFrame guardado exitosamente en: {file_path.resolve()}')
