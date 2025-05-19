@@ -25,7 +25,7 @@ def test_split_validation(
     """
     # 1) Determinar rutas de archivos
     root_dir = Path(__file__).parent.parent if '__file__' in globals() else Path.cwd()
-    data_dir = root_dir / 'data'
+    data_dir = root_dir / 'data' / 'processed'
     
     if train_path is None:
         train_path = data_dir / 'train.parquet'
