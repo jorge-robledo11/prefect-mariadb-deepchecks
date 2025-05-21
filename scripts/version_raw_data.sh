@@ -1,43 +1,48 @@
 #!/bin/bash
-
-# Salir inmediatamente si un comando falla
 set -e
-# Tratar las referencias a variables no establecidas como un error
 set -u
-# El estado de salida de una tubería es el del último comando que falló, o cero si todos tuvieron éxito
 set -o pipefail
 
 # --- Configuración ---
-# Obtener la ruta absoluta del directorio donde se encuentra este script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-# Asumir que la raíz del proyecto está un nivel arriba del directorio 'scripts'
 PROJECT_ROOT="$SCRIPT_DIR/.."
-
-# Navegar a la raíz del proyecto
 cd "$PROJECT_ROOT"
 echo "Ejecutando en el directorio: $(pwd)"
 
+# --- Cargar variables de entorno desde .env ---
+if [ -f ".env" ]; then
+    set -a
+    source .env
+    set +a
+else
+    echo "Advertencia: No se encontró el archivo .env en $(pwd)"
+fi
+
 # --- Rutas y Nombres de Archivo ---
-# Ubicación canónica del archivo CSV crudo, gestionado por DVC.
-# Este es el archivo que generate_data.py crea.
 DVC_TRACKED_CSV_DIR="data/raw"
 RAW_CSV_FILE_NAME="dataset_raw.csv"
 DVC_TRACKED_CSV_FILE_PATH="$DVC_TRACKED_CSV_DIR/$RAW_CSV_FILE_NAME"
-
-# Script que genera los datos crudos (opcional, pero bueno tenerlo como referencia)
 GENERATE_DATA_SCRIPT_PATH="src/generate_data.py"
-
-# Mensaje de commit para Git
 COMMIT_MESSAGE="Update raw CSV data in DVC ($(date +'%Y-%m-%d %H:%M:%S'))"
 
-# --- Verificaciones Previas ---
-# 1. Verificar que el script de generación de datos exista (opcional)
-if [ ! -f "$GENERATE_DATA_SCRIPT_PATH" ]; then
-    echo "Advertencia: El script de generación de datos '$GENERATE_DATA_SCRIPT_PATH' no fue encontrado."
-    # Decide si esto debe ser un error fatal o solo una advertencia
+# --- Configuración del remoto DVC ---
+DVC_REMOTE_PATH="${DVC_REMOTE_PATH:-/home/lynn/Documentos/development/repositorio-dvc-remoto/}"
+DVC_REMOTE_NAME="${DVC_REMOTE_NAME:-localremote}"
+
+if ! uv run dvc remote list | grep -q "$DVC_REMOTE_NAME"; then
+    echo "No hay remoto '$DVC_REMOTE_NAME' configurado. Configurando en $DVC_REMOTE_PATH ..."
+    uv run dvc remote add -d "$DVC_REMOTE_NAME" "$DVC_REMOTE_PATH"
+    git add .dvc/config
+    git commit -m "Configura DVC remote $DVC_REMOTE_NAME en $DVC_REMOTE_PATH" || true
+else
+    echo "Remoto DVC '$DVC_REMOTE_NAME' ya está configurado."
 fi
 
-# 2. Verificar que el directorio .dvc exista
+# --- Verificaciones Previas ---
+if [ ! -f "$GENERATE_DATA_SCRIPT_PATH" ]; then
+    echo "Advertencia: El script de generación de datos '$GENERATE_DATA_SCRIPT_PATH' no fue encontrado."
+fi
+
 if [ ! -d ".dvc" ]; then
     echo "Error: Este no parece ser un repositorio DVC inicializado (falta el directorio .dvc)."
     echo "Asegúrate de haber ejecutado 'dvc init'."
@@ -47,23 +52,19 @@ fi
 # --- 1. Generar/Actualizar los Datos Crudos ---
 echo "Paso 1: Asegurar que los datos crudos CSV ('$DVC_TRACKED_CSV_FILE_PATH') están actualizados."
 echo "Ejecutando el script de generación de datos: python $GENERATE_DATA_SCRIPT_PATH"
-python "$GENERATE_DATA_SCRIPT_PATH" # Esto creará/actualizará data/raw/dataset_raw.csv
+python "$GENERATE_DATA_SCRIPT_PATH"
 
-# Verificar que el archivo CSV fue creado/actualizado por el script de Python
 if [ ! -f "$DVC_TRACKED_CSV_FILE_PATH" ]; then
     echo "Error: El script '$GENERATE_DATA_SCRIPT_PATH' no generó el archivo CSV '$DVC_TRACKED_CSV_FILE_PATH'."
     exit 1
 fi
 echo "Archivo CSV '$DVC_TRACKED_CSV_FILE_PATH' generado/actualizado."
 
-# El archivo que DVC versionará es el que está en la ubicación canónica de DVC
 TARGET_FILE_TO_VERSION="$DVC_TRACKED_CSV_FILE_PATH"
 
 # --- 2. Versionar el archivo CSV con DVC ---
-# Asegúrate de que data/raw/dataset_raw.csv está en tu .gitignore
 echo "Paso 2: Versionando archivo de datos CSV ('$TARGET_FILE_TO_VERSION') con DVC..."
 uv run dvc add "$TARGET_FILE_TO_VERSION"
-# Esto creará/actualizará el archivo data/raw/dataset_raw.csv.dvc
 
 # --- 3. Confirmar los cambios del archivo .dvc en Git ---
 echo "Paso 3: Añadiendo y confirmando '$TARGET_FILE_TO_VERSION.dvc' en Git..."
@@ -77,11 +78,11 @@ else
     echo "Cambios confirmados en Git."
 fi
 
-# --- 4. Subir los datos al almacenamiento remoto de DVC (Opcional pero recomendado) ---
+# --- 4. Subir los datos al almacenamiento remoto de DVC ---
 echo "Paso 4: Subiendo datos CSV al almacenamiento remoto de DVC (dvc push)..."
 uv run dvc push "$TARGET_FILE_TO_VERSION.dvc"
 
-# --- 5. Subir los cambios de Git al repositorio remoto (Opcional pero recomendado) ---
+# --- 5. Subir los cambios de Git al repositorio remoto (Opcional) ---
 echo "Paso 5: Subiendo commits de Git al repositorio remoto (git push)..."
 
 echo "-------------------------------------------------------------"
