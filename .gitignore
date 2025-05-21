@@ -179,4 +179,11 @@ cython_debug/
 terraform.tfvars
 *.auto.tfvars
 docs/prompts.txt
-data/
+
+# Ignora todo en data/
+data/*
+
+# Pero NO ignores los archivos .dvc (metadatos de DVC)
+!data/**/*.dvc
+!data/*.dvc
+
