@@ -1,10 +1,12 @@
-# src/train_rf_model.py
 from pandas import DataFrame, Series
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 from pathlib import Path
+from prefect import task
+from sklearn.metrics import roc_auc_score
 
 
+@task(name='Entrenar el modelo', retries=3)
 def train_model(X_train: DataFrame, y_train: Series) -> RandomForestClassifier:
     """
     Entrena un modelo Random Forest
@@ -13,7 +15,7 @@ def train_model(X_train: DataFrame, y_train: Series) -> RandomForestClassifier:
         
         # Inicializar y entrenar modelo
         model = RandomForestClassifier(
-            seed=42,
+            random_state=42,
             n_jobs=-1
         )
         
@@ -24,7 +26,8 @@ def train_model(X_train: DataFrame, y_train: Series) -> RandomForestClassifier:
         print(f'Error durante el entrenamiento: {str(e)}')
 
 
-def save_model(model: RandomForestClassifier) -> Path:
+@task(name='Guardar el modelo', retries=3)
+def save_model(model: RandomForestClassifier) -> None:
     """
     Guarda el modelo entrenado en formato .pkl.
     Crea automáticamente el directorio de modelos si no existe.
@@ -46,7 +49,49 @@ def save_model(model: RandomForestClassifier) -> Path:
 
         joblib.dump(model, model_path)
         print(f'Modelo guardado en: {model_path.resolve()}')
-        return model_path
 
     except Exception as e:
         print(f'Error guardando modelo: {str(e)}')
+
+
+task(name='Evaluar modelo (ROC-AUC)', log_prints=True)
+def evaluate_model(
+    model: RandomForestClassifier,
+    X_train: DataFrame,
+    y_train: Series,
+    X_test: DataFrame,
+    y_test: Series
+) -> dict:
+    """
+    Evalúa el modelo usando la métrica ROC-AUC en train y test.
+
+    Args:
+        model: Modelo entrenado
+        X_train: Datos de entrenamiento
+        y_train: Etiquetas de entrenamiento
+        X_test: Datos de prueba
+        y_test: Etiquetas de prueba
+
+    Returns:
+        dict: {'roc_auc_train': float, 'roc_auc_test': float}
+    """
+    try:
+        # Verifica que el modelo tenga predict_proba
+        if not hasattr(model, 'predict_proba'):
+            raise ValueError('El modelo no tiene método predict_proba necesario para ROC-AUC')
+
+        # Probabilidades para clase positiva
+        y_train_proba = model.predict_proba(X_train)[:, 1]
+        y_test_proba = model.predict_proba(X_test)[:, 1]
+
+        # Cálculo de ROC-AUC
+        roc_auc_train = roc_auc_score(y_train, y_train_proba)
+        roc_auc_test = roc_auc_score(y_test, y_test_proba)
+
+        return {
+            'roc_auc_train': roc_auc_train,
+            'roc_auc_test': roc_auc_test
+        }
+
+    except Exception as e:
+        raise RuntimeError(f'Error en evaluación ROC-AUC: {str(e)}') from e

@@ -1,7 +1,7 @@
 from src.load_data import load_data
 from src.split_dataset import split_dataset, split_features_and_target
 from src.pipelines import feature_engineering
-from src.model import train_model, save_model
+from src.model import train_model, save_model, evaluate_model
 from prefect import flow
 
 import warnings
@@ -44,6 +44,17 @@ def main(target: str) -> None:
     save_model(
         model=model
     )
+    
+    resultados = evaluate_model(
+        model=model,
+        X_train=X_train,
+        y_train=y_train,
+        X_test=X_test,
+        y_test=y_test
+    )
+    
+    print(f'ROC-AUC (Train): {resultados["roc_auc_train"]:.2f}')
+    print(f'ROC-AUC (Test):  {resultados["roc_auc_test"]:.2f}')
     
     
 if __name__ == '__main__':
