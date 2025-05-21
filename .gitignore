@@ -183,7 +183,10 @@ docs/prompts.txt
 # Ignora todo en data/
 data/*
 
-# Pero NO ignores los archivos .dvc (metadatos de DVC)
+# Pero NO ignores los archivos .dvc (en cualquier subcarpeta)
 !data/**/*.dvc
 !data/*.dvc
 
+# NO ignores las carpetas que contienen .dvc
+!data/raw/
+!data/processed/
