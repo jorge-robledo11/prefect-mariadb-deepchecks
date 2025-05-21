@@ -1,6 +1,7 @@
 from src.load_data import load_data
 from src.split_dataset import split_dataset, split_features_and_target
 from src.pipelines import feature_engineering
+from src.model import train_model, save_model
 from prefect import flow
 
 import warnings
@@ -33,6 +34,15 @@ def main(target: str) -> None:
         X_train=X_train,
         y_train=y_train,
         X_test=X_test
+    )
+    
+    model = train_model(
+        X_train=X_train,
+        y_train=y_train
+    )
+    
+    save_model(
+        model=model
     )
     
     

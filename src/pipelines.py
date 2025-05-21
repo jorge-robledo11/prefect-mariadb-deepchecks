@@ -25,7 +25,7 @@ def feature_engineering(X_train: DataFrame, y_train: Series, X_test: DataFrame) 
     root_dir = Path(__file__).parent.parent if '__file__' in globals() else Path.cwd()
     pipelines_dir = root_dir / 'pipelines'
     
-    # 2) Crea el directorio 'piepelines/' si no existe.
+    # 2) Crea el directorio 'pipelines/' si no existe.
     pipelines_dir.mkdir(parents=True, exist_ok=True)
     if not pipelines_dir.exists(): 
         print(f'📁 Directorio de pipelines creado en: {pipelines_dir}')
