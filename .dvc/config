@@ -1,0 +1,4 @@
+[core]
+    remote = localremote
+['remote "localremote"']
+    url = /home/lynn/Documentos/development/repositorio-dvc-local/
