@@ -180,13 +180,7 @@ terraform.tfvars
 *.auto.tfvars
 docs/prompts.txt
 
-# Ignora todo en data/
-data/*
+# Ignora estos formatos data/
+*.csv
+*.parquet
 
-# Pero NO ignores los archivos .dvc (en cualquier subcarpeta)
-!data/**/*.dvc
-!data/*.dvc
-
-# NO ignores las carpetas que contienen .dvc
-!data/raw/
-!data/processed/
