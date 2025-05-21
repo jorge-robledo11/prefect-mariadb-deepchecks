@@ -11,6 +11,7 @@ chmod +x ./scripts/*.sh
 ./scripts/dvc_remote_setup.sh
 ./scripts/data_generation.sh
 ./scripts/dvc_versioning_raw_data.sh
+./scripts/dvc_versioning_processed_data.sh
 
 echo "-------------------------------------------------------------"
 echo "Flujo completo de versionado y subida de datos ejecutado con éxito."
