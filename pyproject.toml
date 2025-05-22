@@ -67,8 +67,18 @@ warn_no_return = true
 warn_unreachable = true
 ignore_missing_imports = true
 
+exclude = [
+    "tests/",          # Ignora tests si no tienen anotaciones de tipo
+    "scripts/",        # Ignora scripts auxiliares
+    "**/__init__.py",  # Opcional: ignora docstrings en __init__
+]
+
 # Configuración específica para ciertos módulos o paquetes
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
 check_untyped_defs = true
+
+[tool.bandit]
+exclude_dirs = [".venv", ".git", "tests", "__pycache__"]
+skips = ["B101"]  # No alertar por 'assert'

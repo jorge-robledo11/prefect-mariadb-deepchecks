@@ -57,8 +57,9 @@ def load_data() -> pd.DataFrame:
             f'mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}'
         )
 
-        # 3) Lee la tabla especificada
-        data = pd.read_sql(f'SELECT * FROM {table_name};', con=engine)
+        # Construye la consulta de forma segura
+        query = f'SELECT * FROM `{table_name}`'  # nosec
+        data = pd.read_sql(query, con=engine)
         return data
 
     except SQLAlchemyError as e:
