@@ -18,6 +18,7 @@ dev = [
     "deepchecks>=0.19.1",
     "dvc>=3.59.2",
     "jupyter>=1.1.1",
+    "mypy>=1.15.0",
     "plotly>=6.0.1",
     "pre-commit>=4.2.0",
     "pydocstyle>=6.3.0",
@@ -35,7 +36,8 @@ ignore = [
     "E501",   # Ignora longitud de línea
     "D203",   # Ignora blank line before class (incompatible con D211)
     "D212",   # Ignora summary in first line (incompatible con D213)
-    "D413"
+    "D413",
+    "D104"
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -48,3 +50,27 @@ quote-style = "single"   # Usa comillas simples en el formateo (opcional)
 [tool.pydocstyle]
 convention = "google"
 add-ignore = ["D212", "D203", "D413", "D104"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+# Ignorar errores en importaciones de bibliotecas sin tipado
+ignore_missing_imports = true
+
+# Configuración específica para ciertos módulos o paquetes
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = true

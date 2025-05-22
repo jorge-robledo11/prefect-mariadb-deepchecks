@@ -20,11 +20,13 @@ def feature_engineering(
     Carga un pipeline de scikit-learn pre-guardado, lo ajusta y transforma los datos.
 
     Args:
+    ----
         X_train (DataFrame): Características del conjunto de entrenamiento.
         y_train (Series): Variable objetivo del conjunto de entrenamiento.
         X_test (DataFrame): Características del conjunto de prueba.
 
     Returns:
+    -------
         tuple[DataFrame, DataFrame]: DataFrames de entrenamiento y prueba transformados.
             Nota: El pipeline podría devolver np.ndarray en lugar de DataFrame.
     """

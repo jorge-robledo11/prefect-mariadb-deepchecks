@@ -1,0 +1,28 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4  # Usa la versión estable más reciente de Ruff
+    hooks:
+      - id: ruff
+        args: [--fix]        # Lint + autofix
+      - id: ruff-format      # Formateo de código
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-case-conflict
+
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0  # Usa la versión que prefieras
+    hooks:
+    - id: mypy
+      additional_dependencies:
+      - "types-pymysql>=1.1.0"

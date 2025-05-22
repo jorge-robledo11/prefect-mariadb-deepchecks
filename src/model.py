@@ -1,4 +1,3 @@
-
 """
 Módulo para entrenamiento, guardado y evaluación de modelos de Machine Learning.
 
@@ -18,12 +17,14 @@ from sklearn.metrics import roc_auc_score
 def train_model(X_train: DataFrame, y_train: Series) -> RandomForestClassifier:
     """
     Entrena un modelo Random Forest.
-    
+
     Args:
+    ----
         X_train (DataFrame): Características de entrenamiento.
         y_train (Series): Variable objetivo de entrenamiento.
 
     Returns:
+    -------
         RandomForestClassifier: Modelo entrenado.
     """
     try:
@@ -38,16 +39,18 @@ def train_model(X_train: DataFrame, y_train: Series) -> RandomForestClassifier:
 
 
 @task(name='Guardar el modelo', retries=3)
-def save_model(model: RandomForestClassifier) -> None:
+def save_model(model: RandomForestClassifier) -> Path:
     """
     Crea automáticamente el directorio de modelos si no existe.
-    
+
     Guarda el modelo entrenado en formato .pkl.
 
     Args:
+    ----
         model (RandomForestClassifier): Modelo entrenado a guardar
 
     Returns:
+    -------
         Path: Ruta absoluta donde se guardó el modelo
     """
     try:
@@ -58,28 +61,33 @@ def save_model(model: RandomForestClassifier) -> None:
         model_path = models_dir / f'{type(model).__name__}.pkl'
 
         # Si el directorio no existe, créalo
-        if not models_dir.mkdir(parents=True, exist_ok=True):
-            print(f'📁 Directorio de modelos creado en: {models_dir}')
+        models_dir.mkdir(parents=True, exist_ok=True)
+        print(f'📁 Directorio de modelos creado en: {models_dir}')
 
         joblib.dump(model, model_path)
         print(f'Modelo guardado en: {model_path.resolve()}')
+        return model_path
 
     except Exception as e:
         print(f'Error guardando modelo: {str(e)}')
+        raise
 
 
 task(name='Evaluar modelo (ROC-AUC)', log_prints=True)
+
+
 def evaluate_model(
     model: RandomForestClassifier,
     X_train: DataFrame,
     y_train: Series,
     X_test: DataFrame,
     y_test: Series,
-) -> dict:
+) -> dict[str, float]:
     """
     Evalúa el modelo usando la métrica ROC-AUC en train y test.
 
     Args:
+    ----
         model: Modelo entrenado
         X_train: Datos de entrenamiento
         y_train: Etiquetas de entrenamiento
@@ -87,6 +95,7 @@ def evaluate_model(
         y_test: Etiquetas de prueba
 
     Returns:
+    -------
         dict: {'roc_auc_train': float, 'roc_auc_test': float}
     """
     try:

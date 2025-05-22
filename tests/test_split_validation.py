@@ -10,7 +10,7 @@ def test_split_validation(
     train_path: Path | str | None = None,
     test_path: Path | str | None = None,
     label: str = 'target',
-    categorical_features: list[str] = ['cat1', 'cat2', 'disc1', 'disc2'],
+    categorical_features: list[str] | None = None,
 ) -> None:
     """
     Ejecuta la suite de validación train-test de Deepchecks y genera un reporte HTML.
@@ -24,6 +24,10 @@ def test_split_validation(
     Raises:
         AssertionError: Si la suite de validación falla
     """
+    # Inicializar valor por defecto para el argumento mutable
+    if categorical_features is None:
+        categorical_features = ['cat1', 'cat2', 'disc1', 'disc2']
+
     # 1) Determinar rutas de archivos
     root_dir = Path(__file__).parent.parent if '__file__' in globals() else Path.cwd()
     data_dir = root_dir / 'data' / 'processed'
@@ -69,7 +73,6 @@ def test_split_validation(
 
     # 5) Crear datasets de Deepchecks
     train_ds = Dataset(train_df, label=label, cat_features=categorical_features)
-
     test_ds = Dataset(test_df, label=label, cat_features=categorical_features)
 
     # 6) Ejecutar la suite de validación
@@ -86,6 +89,6 @@ def test_split_validation(
     suite_result.save_as_cml_markdown(str(reports_path), attach_html_report=False)
 
     # 9) Verificar que la suite pasó
-    assert suite_result.passed(), (
-        'La suite de validación train-test falló. Consulta el reporte HTML'
-    )
+    assert (
+        suite_result.passed()
+    ), 'La suite de validación train-test falló. Consulta el reporte HTML'

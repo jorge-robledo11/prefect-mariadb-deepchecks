@@ -17,10 +17,12 @@ def load_data() -> pd.DataFrame:
     Lee las credenciales de variables de entorno, establece una conexión
     y carga los datos de la tabla especificada.
 
-    Returns:
+    Returns
+    -------
         pd.DataFrame: Datos cargados.
 
-    Raises:
+    Raises
+    ------
         RuntimeError: Si faltan variables de entorno.
         SQLAlchemyError: Si hay errores de conexión.
     """

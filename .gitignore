@@ -183,4 +183,3 @@ docs/prompts.txt
 # Ignora estos formatos data/
 *.csv
 *.parquet
-

@@ -19,11 +19,13 @@ def split_dataset(
     Divide un dataset en conjuntos de entrenamiento y prueba, y guarda los archivos en formato Parquet.
 
     Args:
+    ----
         data: DataFrame con los datos a dividir
         target: Nombre de la columna objetivo (usado para estratificación)
         seed: Semilla para reproducibilidad
 
     Returns:
+    -------
         Tupla con (train_data, test_data)
     """
     # 1) Determina root_dir
