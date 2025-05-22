@@ -1,0 +1,67 @@
+# Entornos virtuales y cachés
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Configuración de IDE
+.vscode/
+.idea/
+
+# Control de versiones y configuración de Git
+.git/
+.gitignore
+.gitattributes
+
+# Archivos de configuración y variables sensibles
+.env
+*.env
+*.key
+*.pem
+
+# Datos, modelos y salidas grandes (no deben ir en la imagen)
+data/
+models/
+output/
+logs/
+notebooks/
+reports/
+
+# Archivos de pruebas y cachés de testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+tests/__pycache__/
+tests/*.pyc
+
+# Archivos de construcción y distribución
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+*.whl
+
+# Archivos temporales y de sistema
+*.log
+*.tmp
+*.bak
+*.old
+.DS_Store
+Thumbs.db
+*.swp
+
+# Otros archivos de Docker
+Dockerfile
+.dockerignore
+
+# DVC cache/config (si no quieres incluirlo)
+.dvc/
+.dvcignore

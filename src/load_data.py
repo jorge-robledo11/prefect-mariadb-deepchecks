@@ -26,40 +26,34 @@ def load_data() -> pd.DataFrame:
         raise RuntimeError('No se pudo cargar el archivo .env')
 
     # Obtener variables de entorno con validación
-    user = os.getenv('DB_USER')
-    password = os.getenv('DB_PASSWORD')
-    host = os.getenv('DB_HOST')
-    port = os.getenv('DB_PORT')
-    db = os.getenv('DB_NAME')
-    table_name = os.getenv('TABLE_NAME')
+    user = os.environ.get('DB_USER')
+    password = os.environ.get('DB_PASSWORD')
+    host = os.environ.get('DB_HOST')
+    port = os.environ.get('DB_PORT')
+    db_name = os.environ.get('DB_NAME')
+    table_name = os.environ.get('TABLE_NAME')
 
-    # Verificar que todas las variables necesarias estén definidas
-    if not user:
-        raise ValueError('Variable de entorno DB_USER no definida')
-    if not password:
-        raise ValueError('Variable de entorno DB_PASSWORD no definida')
-    if not host:
-        raise ValueError('Variable de entorno DB_HOST no definida')
-    if not port:
-        raise ValueError('Variable de entorno DB_PORT no definida')
-    if not db:
-        raise ValueError('Variable de entorno DB_NAME no definida')
-    if not table_name:
-        raise ValueError('Variable de entorno TABLE_NAME no definida')
+    # Validar variables
+    required_vars = {
+        'DB_USER': user,
+        'DB_PASSWORD': password,
+        'DB_HOST': host,
+        'DB_PORT': port,
+        'DB_NAME': db_name,
+        'TABLE_NAME': table_name
+    }
+    missing = [k for k, v in required_vars.items() if not v]
+    if missing:
+        raise RuntimeError(f"Variables de entorno faltantes: {', '.join(missing)}")
 
     # 2) Crea la URL de conexión
     try:
         engine = create_engine(
-            f'mysql+pymysql://{user}:{password}@{host}:{port}/{db}'
+            f'mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}'
         )
 
         # 3) Lee la tabla especificada
         data = pd.read_sql(f'SELECT * FROM {table_name};', con=engine)
-        
-        # Verificar que el DataFrame no esté vacío
-        if data.empty:
-            raise ValueError(f'La tabla {table_name} no contiene datos')
-            
         return data
         
     except SQLAlchemyError as e:
