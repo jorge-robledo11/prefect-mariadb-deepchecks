@@ -1,8 +1,16 @@
+"""
+Genera un dataset sintético para pruebas de modelado predictivo.
+
+Este script crea datos simulados con variables categóricas, continuas, discretas
+y una variable target binaria, guardándolos en un archivo CSV en la carpeta `data/raw`.
+"""
+
+import uuid
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from scipy.special import expit
-import uuid
 
 # 1) Parámetros
 N = 250_000
@@ -11,18 +19,20 @@ cats1 = ['A', 'B', 'C', 'D', 'E']
 cats2 = ['X', 'Y', 'Z']
 
 # 2) Generación del DataFrame
-df = pd.DataFrame({
-    # Genera un UUID4 distinto para cada fila, lo convertimos a string
-    'id': [str(uuid.uuid4().hex)[:12] for _ in range(N)],
-    'cat1': np.random.choice(cats1, size=N),
-    'cat2': np.random.choice(cats2, size=N),
-    'cont1': np.random.normal(loc=0.0, scale=1.0, size=N),
-    'cont2': np.random.uniform(low=0.0, high=1.0, size=N),
-    'cont3': np.random.exponential(scale=1.0, size=N),
-    'cont4': np.random.gamma(shape=2.0, scale=2.0, size=N),
-    'disc1': np.random.randint(0, 4, size=N),
-    'disc2': np.random.randint(1, 6, size=N),
-})
+df = pd.DataFrame(
+    {
+        # Genera un UUID4 distinto para cada fila, lo convertimos a string
+        'id': [str(uuid.uuid4().hex)[:12] for _ in range(N)],
+        'cat1': np.random.choice(cats1, size=N),
+        'cat2': np.random.choice(cats2, size=N),
+        'cont1': np.random.normal(loc=0.0, scale=1.0, size=N),
+        'cont2': np.random.uniform(low=0.0, high=1.0, size=N),
+        'cont3': np.random.exponential(scale=1.0, size=N),
+        'cont4': np.random.gamma(shape=2.0, scale=2.0, size=N),
+        'disc1': np.random.randint(0, 4, size=N),
+        'disc2': np.random.randint(1, 6, size=N),
+    }
+)
 
 # 3) Cast a categorías
 for c in ['cat1', 'cat2', 'disc1', 'disc2']:
@@ -37,11 +47,11 @@ for col in ['cont1', 'cont2', 'cont3', 'cont4']:
 noise = np.random.normal(scale=0.5, size=N)
 logit = (
     -0.2
-  + 0.4 * df['cont1']
-  - 0.3 * df['cont2']
-  + 0.5 * df['cont3']
-  - 0.2 * df['cont4']
-  + noise
+    + 0.4 * df['cont1']
+    - 0.3 * df['cont2']
+    + 0.5 * df['cont3']
+    - 0.2 * df['cont4']
+    + noise
 )
 logit = np.clip(logit, -10, 10)
 prob = expit(logit)

@@ -1,6 +1,8 @@
 import pytest
 from pandas import DataFrame
+
 from src.load_data import load_data
+
 
 def test_dataframe_not_empty() -> None:
     """

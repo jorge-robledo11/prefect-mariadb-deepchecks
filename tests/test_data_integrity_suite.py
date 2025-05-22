@@ -1,15 +1,18 @@
-import pytest
+import warnings
 from pathlib import Path
-from pandas import DataFrame
-from sqlalchemy.exc import SQLAlchemyError
+
+import pytest
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.suites import data_integrity
+from pandas import DataFrame
+from sqlalchemy.exc import SQLAlchemyError
+
 from src.load_data import load_data
-import warnings
+
 warnings.filterwarnings('ignore')
 
 
-def test_data_integrity_suite(target: str='target') -> None:
+def test_data_integrity_suite(target: str = 'target') -> None:
     """
     Ejecuta la suite de integridad de Deepchecks sobre los datos cargados
     por load_data(), genera un reporte HTML si no existe y aserta que todos
@@ -41,4 +44,4 @@ def test_data_integrity_suite(target: str='target') -> None:
     result.save_as_cml_markdown(file=str(report_path), attach_html_report=False)
 
     # 6) Aserta que todos los checks pasen
-    assert result.passed(), f'Suite de integridad falló. Consulta el reporte HTML'
+    assert result.passed(), 'Suite de integridad falló. Consulta el reporte HTML'

@@ -20,6 +20,31 @@ dev = [
     "jupyter>=1.1.1",
     "plotly>=6.0.1",
     "pre-commit>=4.2.0",
+    "pydocstyle>=6.3.0",
     "pytest>=8.3.5",
     "ruff>=0.11.10",
 ]
+
+[tool.ruff]
+line-length = 88         # Longitud máxima de línea (como Black)
+target-version = "py312" # Versión de Python objetivo
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "UP", "D"]
+ignore = [
+    "E501",   # Ignora longitud de línea
+    "D203",   # Ignora blank line before class (incompatible con D211)
+    "D212",   # Ignora summary in first line (incompatible con D213)
+    "D413"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["D"]
+
+[tool.ruff.format]
+quote-style = "single"   # Usa comillas simples en el formateo (opcional)
+
+[tool.pydocstyle]
+convention = "google"
+add-ignore = ["D212", "D203", "D413", "D104"]
