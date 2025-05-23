@@ -73,7 +73,6 @@ exclude = [
     "**/__init__.py",  # Opcional: ignora docstrings en __init__
 ]
 
-# Configuración específica para ciertos módulos o paquetes
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
