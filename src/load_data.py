@@ -59,8 +59,7 @@ def load_data() -> pd.DataFrame:
 
         # Construye la consulta de forma segura
         query = f'SELECT * FROM `{table_name}`'  # nosec
-        data = pd.read_sql(query, con=engine)
-        return data
+        return pd.read_sql(query, con=engine)
 
     except SQLAlchemyError as e:
         raise SQLAlchemyError(f'Error de conexión a la base de datos: {str(e)}') from e

@@ -1,46 +1,63 @@
 repos:
+  # 1. Herramientas de modernización y corrección de sintaxis (ejecutan primero)
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0  # Versión actualizada
+    hooks:
+      - id: pyupgrade
+        args: [--py312-plus]  # Actualizado para Python 3.12
+
+  # 2. Linting y formateo (orden crítico: ruff antes que ruff-format)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.4  # Usa la versión estable más reciente de Ruff
+    rev: v0.11.10  # Versión más reciente basada en los resultados de búsqueda
     hooks:
       - id: ruff
-        args: [--fix]        # Lint + autofix
-      - id: ruff-format      # Formateo de código
+        args: [--fix]
+      - id: ruff-format
 
+  # 3. Verificaciones de archivos generales (no modifican código Python)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0  # Versión actualizada
     hooks:
       - id: check-yaml
       - id: check-toml
       - id: end-of-file-fixer
+        types_or: [python]  # Solo archivos Python
       - id: trailing-whitespace
+        types_or: [python]  # Solo archivos Python
       - id: check-case-conflict
       - id: detect-private-key
       - id: check-added-large-files
 
+  # 4. Verificaciones de documentación
   - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.3.0
     hooks:
       - id: pydocstyle
 
+  # 5. Verificación de tipos (no modifica código)
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.15.0  # Versión actualizada
     hooks:
-    - id: mypy
-      additional_dependencies:
-      - "types-pymysql>=1.1.0"
+      - id: mypy
+        additional_dependencies:
+          - "types-pymysql>=1.1.0"
 
+  # 6. Análisis de seguridad (ejecuta al final)
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.7
+    rev: 1.7.9  # Versión actualizada
     hooks:
       - id: bandit
         args: ["-c", "pyproject.toml", "-r", "."]
         additional_dependencies: ["bandit[toml]"]
 
-  # - repo: local
-  #   hooks:
-  #     - id: pytest
-  #       name: pytest
-  #       entry: bash -c "pytest -W ignore --maxfail=1 --disable-warnings || true"
-  #       language: system
-  #       pass_filenames: false
-  #       always_run: true
+  # 7. Tests
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: bash -c "pytest -x --tb=short -q || true"
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit]
+

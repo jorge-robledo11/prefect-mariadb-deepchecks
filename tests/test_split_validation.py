@@ -89,6 +89,6 @@ def test_split_validation(
     suite_result.save_as_cml_markdown(str(reports_path), attach_html_report=False)
 
     # 9) Verificar que la suite pasó
-    assert (
-        suite_result.passed()
-    ), 'La suite de validación train-test falló. Consulta el reporte HTML'
+    assert suite_result.passed(), (
+        'La suite de validación train-test falló. Consulta el reporte HTML'
+    )
