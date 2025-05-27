@@ -28,8 +28,11 @@ __pycache__/
 # Datos, modelos y salidas grandes (no deben ir en la imagen)
 data/
 models/
-output/
-logs/
+tests/
+pipelines/
+terraform/
+docs/
+scripts/
 notebooks/
 reports/
 

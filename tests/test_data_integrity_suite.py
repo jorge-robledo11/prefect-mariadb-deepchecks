@@ -7,7 +7,7 @@ from deepchecks.tabular.suites import data_integrity
 from pandas import DataFrame
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.load_data import load_data
+from src.database.connection import load_data
 
 warnings.filterwarnings('ignore')
 

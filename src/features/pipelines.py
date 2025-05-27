@@ -8,11 +8,9 @@ from pathlib import Path
 
 import joblib
 from pandas import DataFrame, Series
-from prefect import task
 from sklearn.pipeline import Pipeline
 
 
-@task(name='Ingeniería de Características', retries=3)
 def feature_engineering(
     X_train: DataFrame, y_train: Series, X_test: DataFrame
 ) -> tuple[DataFrame, DataFrame]:

@@ -7,11 +7,9 @@ Contiene funciones para realizar la división estratificada del dataset y guarda
 from pathlib import Path
 
 from pandas import DataFrame
-from prefect import task
 from sklearn.model_selection import train_test_split
 
 
-@task(name='Separar el dataset y guardarlos', retries=3)
 def split_dataset(
     data: DataFrame, target: str, seed: int = 42
 ) -> tuple[DataFrame, DataFrame]:
@@ -62,7 +60,6 @@ def split_dataset(
     return train_data, test_data
 
 
-@task(name='Separar características y target', retries=3)
 def split_features_and_target(
     train_set: DataFrame, test_set: DataFrame
 ) -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:

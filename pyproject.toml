@@ -4,20 +4,19 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12.10"
+
+# Dependencias principales
 dependencies = [
-    "feature-engine>=1.8.3",
-    "prefect>=3.4.1",
-    "pyarrow>=20.0.0",
-    "pymysql>=1.1.1",
     "python-dotenv>=1.1.0",
 ]
 
+# Dependencias de desarrollo
 [dependency-groups]
 dev = [
+    "jupyter>=1.1.1",
     "anywidget>=0.9.18",
     "deepchecks>=0.19.1",
     "dvc>=3.59.2",
-    "jupyter>=1.1.1",
     "mypy>=1.15.0",
     "pre-commit>=4.2.0",
     "pydocstyle>=6.3.0",
@@ -25,6 +24,37 @@ dev = [
     "pyupgrade>=3.20.0",
     "ruff>=0.11.10",
 ]
+
+# Microservicio de base de datos
+db = [
+    "sqlalchemy>=2.0.40",
+    "pymysql>=1.1.1",
+    "pandas>=2.2.3",
+]
+
+# Microservicio de feature engineering
+features = [
+    "feature-engine>=1.8.3",
+    "pandas>=2.2.3",
+    "pyarrow>=20.0.0",
+]
+
+# Microservicio de entrenamiento
+training = [
+    "scikit-learn>=1.6.1",
+    "joblib>=1.5.0",
+]
+
+# Microservicio de API REST
+api = [
+    "fastapi>=0.104.0",
+    "pydantic>=2.0.0",
+    "joblib>=1.5.0",
+]
+
+# Configuración de uv para grupos por defecto
+[tool.uv]
+default-groups = ["dev", "db", "features", "training", "api"]
 
 [tool.ruff]
 line-length = 88         # Longitud máxima de línea (como Black)
@@ -111,6 +141,7 @@ skips = [
     "B101",  # assert_used
     "B601",  # paramiko_calls (común en notebooks)
     "B602",  # subprocess_popen_with_shell_equals_true
+    "B608",  # hardcoded_sql_expressions (para queries con f-strings)
 ]
 
 [tool.coverage.run]
