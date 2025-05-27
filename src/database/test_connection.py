@@ -7,7 +7,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 def main() -> None:
-    """Función principal para diagnóstico de conexión a base de datos."""
+    """
+    Función principal para diagnóstico de conexión a base de datos.
+    """
     print('🔄 Diagnóstico detallado de conexión...')
 
     # Mostrar todas las variables

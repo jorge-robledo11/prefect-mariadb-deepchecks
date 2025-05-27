@@ -3416,8 +3416,10 @@ api = [
     { name = "pydantic" },
 ]
 db = [
-    { name = "pandas" },
+    { name = "numpy" },
     { name = "pymysql" },
+    { name = "python-dateutil" },
+    { name = "pytz" },
     { name = "sqlalchemy" },
 ]
 dev = [
@@ -3452,8 +3454,10 @@ api = [
     { name = "pydantic", specifier = ">=2.0.0" },
 ]
 db = [
-    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "numpy", specifier = ">=1.24.0,<2.0.0" },
     { name = "pymysql", specifier = ">=1.1.1" },
+    { name = "python-dateutil", specifier = ">=2.8.0" },
+    { name = "pytz", specifier = ">=2023.3" },
     { name = "sqlalchemy", specifier = ">=2.0.40" },
 ]
 dev = [

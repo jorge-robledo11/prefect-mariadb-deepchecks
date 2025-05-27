@@ -28,8 +28,11 @@ dev = [
 # Microservicio de base de datos
 db = [
     "sqlalchemy>=2.0.40",
-    "pymysql>=1.1.1",
-    "pandas>=2.2.3",
+    "pymysql>=1.1.1",    
+    # Dependencias core de pandas por separado
+    "numpy>=1.24.0,<2.0.0",
+    "python-dateutil>=2.8.0",
+    "pytz>=2023.3",
 ]
 
 # Microservicio de feature engineering
@@ -55,6 +58,8 @@ api = [
 # Configuración de uv para grupos por defecto
 [tool.uv]
 default-groups = ["dev", "db", "features", "training", "api"]
+no-build-isolation = false    # ✅ Mantén esto para seguridad
+compile-bytecode = true       # ✅ Perfecto para contenedores
 
 [tool.ruff]
 line-length = 88         # Longitud máxima de línea (como Black)
@@ -89,7 +94,8 @@ ignore = [
     "D203",   # Ignora blank line before class (incompatible con D211)
     "D212",   # Ignora summary in first line (incompatible con D213)
     "D413",
-    "D104"
+    "D104",
+    "D200"
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -103,7 +109,13 @@ quote-style = "single"   # Usa comillas simples en el formateo (opcional)
 
 [tool.pydocstyle]
 convention = "google"
-add-ignore = ["D212", "D203", "D413", "D104"]
+add-ignore = [
+    "D212", 
+    "D203", 
+    "D413", 
+    "D104",
+    "D200"
+]
 
 [tool.mypy]
 python_version = "3.12"
